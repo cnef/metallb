@@ -21,10 +21,11 @@ all_binaries = set(["controller",
                     "speaker",
                     "mirror-server"])
 all_architectures = set(["amd64",
-                         "arm",
-                         "arm64",
-                         "ppc64le",
-                         "s390x"])
+                        #  "arm",
+                        #  "arm64",
+                        #  "ppc64le",
+                        #  "s390x"
+                        ])
 
 def _check_architectures(architectures):
     out = set()
@@ -123,12 +124,12 @@ def push(ctx, binaries, architectures, tag="dev", docker_user="metallb"):
     for arch in architectures:
         for bin in binaries:
             build(ctx, binaries=[bin], architectures=[arch], tag=tag, docker_user=docker_user)
-            run("docker push {user}/{bin}:{tag}-{arch}".format(
-                user=docker_user,
-                bin=bin,
-                arch=arch,
-                tag=tag),
-                echo=True)
+            # run("docker push {user}/{bin}:{tag}-{arch}".format(
+            #     user=docker_user,
+            #     bin=bin,
+            #     arch=arch,
+            #     tag=tag),
+            #     echo=True)
 
 @task(iterable=["binaries"],
       help={
@@ -143,16 +144,16 @@ def push_multiarch(ctx, binaries, tag="dev", docker_user="metallb"):
     push(ctx, binaries=binaries, architectures=architectures, tag=tag, docker_user=docker_user)
     
     platforms = ",".join("linux/{}".format(arch) for arch in architectures)
-    for bin in binaries:
-        run("manifest-tool push from-args "
-            "--platforms {platforms} "
-            "--template {user}/{bin}:{tag}-ARCH "
-            "--target {user}/{bin}:{tag}".format(
-                platforms=platforms,
-                user=docker_user,
-                bin=bin,
-                tag=tag),
-            echo=True)
+    # for bin in binaries:
+    #     run("manifest-tool push from-args "
+    #         "--platforms {platforms} "
+    #         "--template {user}/{bin}:{tag}-ARCH "
+    #         "--target {user}/{bin}:{tag}".format(
+    #             platforms=platforms,
+    #             user=docker_user,
+    #             bin=bin,
+    #             tag=tag),
+    #         echo=True)
 
 @task(help={
     "architecture": "CPU architecture of the local machine. Default 'amd64'.",

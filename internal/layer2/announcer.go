@@ -69,6 +69,9 @@ func (a *Announce) updateInterfaces() {
 		if _, err = os.Stat("/sys/class/net/" + ifi.Name + "/master"); !os.IsNotExist(err) {
 			continue
 		}
+		if _, err = os.Stat("/sys/class/net/" + ifi.Name + "/bridge"); !os.IsNotExist(err) {
+			continue
+		}
 		f, err := ioutil.ReadFile("/sys/class/net/" + ifi.Name + "/flags")
 		if err == nil {
 			flags, _ := strconv.ParseUint(string(f)[:len(string(f))-1], 0, 32)
@@ -78,6 +81,7 @@ func (a *Announce) updateInterfaces() {
 			}
 		}
 		if ifi.Flags&net.FlagBroadcast != 0 {
+			l.Log("keepARP", "ok")
 			keepARP[ifi.Index] = true
 		}
 
